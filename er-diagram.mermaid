@@ -1,0 +1,89 @@
+erDiagram
+    customers {
+        VARCHAR customer_id PK
+        VARCHAR customer_unique_id
+        VARCHAR customer_zip_code_prefix
+        VARCHAR customer_city
+        VARCHAR customer_state
+    }
+
+    orders {
+        VARCHAR order_id PK
+        VARCHAR customer_id FK
+        VARCHAR order_status
+        TIMESTAMP order_purchase_timestamp
+        TIMESTAMP order_approved_at
+        TIMESTAMP order_delivered_carrier_date
+        TIMESTAMP order_delivered_customer_date
+        TIMESTAMP order_estimated_delivery_date
+    }
+
+    order_items {
+        VARCHAR order_id FK
+        INT order_item_id
+        VARCHAR product_id FK
+        VARCHAR seller_id FK
+        TIMESTAMP shipping_limit_date
+        DECIMAL price
+        DECIMAL freight_value
+    }
+
+    payments {
+        VARCHAR order_id FK
+        INT payment_sequential
+        VARCHAR payment_type
+        INT payment_installments
+        DECIMAL payment_value
+    }
+
+    reviews {
+        VARCHAR review_id
+        VARCHAR order_id FK
+        INT review_score
+        TEXT review_comment_title
+        TEXT review_comment_message
+        TIMESTAMP review_creation_date
+        TIMESTAMP review_answer_timestamp
+    }
+
+    products {
+        VARCHAR product_id PK
+        VARCHAR product_category_name FK
+        INT product_name_lenght
+        INT product_description_lenght
+        INT product_photos_qty
+        INT product_weight_g
+        INT product_length_cm
+        INT product_height_cm
+        INT product_width_cm
+    }
+
+    sellers {
+        VARCHAR seller_id PK
+        VARCHAR seller_zip_code_prefix
+        VARCHAR seller_city
+        VARCHAR seller_state
+    }
+
+    product_category_name_translation {
+        VARCHAR product_category_name PK
+        VARCHAR product_category_name_english
+    }
+
+    geolocation {
+        VARCHAR geolocation_zip_code_prefix
+        DECIMAL geolocation_lat
+        DECIMAL geolocation_lng
+        VARCHAR geolocation_city
+        VARCHAR geolocation_state
+    }
+
+    customers ||--o{ orders : "1 customer : many orders"
+    orders ||--o{ order_items : "1 order : many items"
+    orders ||--o{ payments : "1 order : many payments"
+    orders ||--o{ reviews : "1 order : many reviews"
+    products ||--o{ order_items : "1 product : many order_items"
+    sellers ||--o{ order_items : "1 seller : many order_items"
+    product_category_name_translation ||--o{ products : "1 category : many products"
+    geolocation }o--o{ customers : "zip_code_prefix"
+    geolocation }o--o{ sellers : "zip_code_prefix"

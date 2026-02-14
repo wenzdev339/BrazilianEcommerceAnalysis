@@ -201,6 +201,10 @@ Payment method distribution is analyzed by transaction count, total value, and a
 
 > Replace the placeholders below with actual query results after execution.
 
+## Sales Performance Overview
+
+![Sales Performance Overview](./assets/SalesPerformanceOverview.png)
+
 | Metric | Value |
 |---|---|
 | Total Revenue (delivered orders) | R$ ___ |

@@ -1,0 +1,47 @@
+name: olist_ecommerce
+version: "1.0.0"
+config-version: 2
+
+profile: olist_ecommerce
+
+# Paths
+model-paths: ["models"]
+seed-paths:  ["seeds"]
+test-paths:  ["tests"]
+macro-paths: ["macros"]
+
+target-path: "target"
+clean-targets: ["target", "dbt_packages"]
+
+# Global model defaults
+models:
+  olist_ecommerce:
+    # Staging: views over the Bronze/source tables — cheap to re-create
+    staging:
+      +materialized: view
+      +schema: staging
+
+    # Intermediate: ephemeral CTEs — no physical table, embedded in downstream SQL
+    intermediate:
+      +materialized: ephemeral
+
+    # Marts: permanent tables — queried by API and Metabase
+    marts:
+      +materialized: table
+      +schema: olist_dwh
+
+# Variables
+vars:
+  start_date:   "2016-01-01"
+  end_date:     "2019-12-31"
+  high_value_threshold:   500
+  medium_value_threshold: 200
+  min_reviews_for_category: 50   # used in category quality analysis
+
+# Seeds
+seeds:
+  olist_ecommerce:
+    brazil_state_region_map:
+      +column_types:
+        state_code: varchar(2)
+        region:     varchar(20)

@@ -1,0 +1,36 @@
+# Environment secrets
+.env
+
+# Data lake zones (Parquet files — too large for git)
+data/raw/
+data/bronze/
+data/silver/
+data/gold/
+reports/output/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.venv/
+venv/
+*.egg-info/
+dist/
+build/
+
+# dbt
+dbt/target/
+dbt/dbt_packages/
+dbt/logs/
+
+# Jupyter notebooks checkpoints
+.ipynb_checkpoints/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

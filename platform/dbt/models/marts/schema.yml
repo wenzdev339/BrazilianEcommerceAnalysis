@@ -1,0 +1,77 @@
+version: 2
+
+models:
+  - name: dim_customer
+    description: "Customer dimension — SCD Type 1, one row per customer_unique_id."
+    columns:
+      - name: customer_key
+        description: "MD5 surrogate key"
+        tests: [not_null, unique]
+      - name: customer_unique_id
+        tests: [not_null, unique]
+      - name: customer_segment
+        tests:
+          - accepted_values:
+              values: [High, Medium, Low]
+      - name: total_orders
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+      - name: lifetime_value
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+
+  - name: dim_product
+    description: "Product dimension — one row per product_id."
+    columns:
+      - name: product_key
+        tests: [not_null, unique]
+      - name: product_id
+        tests: [not_null, unique]
+      - name: product_category_name_english
+        tests: [not_null]
+
+  - name: dim_date
+    description: "Date dimension — complete spine 2016-2019."
+    columns:
+      - name: date_key
+        tests: [not_null, unique]
+      - name: full_date
+        tests: [not_null, unique]
+      - name: is_weekend
+        tests: [not_null]
+
+  - name: fact_orders
+    description: "Central fact table — grain: one row per order_item."
+    columns:
+      - name: order_id
+        tests: [not_null]
+      - name: order_item_id
+        tests: [not_null]
+      - name: price
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              strictly: true
+      - name: review_score
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 1
+              max_value: 5
+              row_condition: "review_score is not null"
+      - name: delivery_days
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              row_condition: "delivery_days is not null"
+
+  - name: agg_monthly_revenue
+    description: "Pre-aggregated monthly revenue for BI dashboards."
+    columns:
+      - name: year_month
+        tests: [not_null, unique]
+      - name: total_revenue
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0

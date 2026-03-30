@@ -1,0 +1,44 @@
+# ── Core PySpark ──────────────────────────────────────────────────────────────
+pyspark==3.5.1
+delta-spark==3.1.0
+
+# ── Data processing ───────────────────────────────────────────────────────────
+pandas==2.2.2
+numpy==1.26.4
+pyarrow==15.0.2
+
+# ── dbt ───────────────────────────────────────────────────────────────────────
+dbt-core==1.8.1
+dbt-postgres==1.8.1
+
+# ── FastAPI / API serving ─────────────────────────────────────────────────────
+fastapi==0.111.0
+uvicorn[standard]==0.29.0
+sqlalchemy==2.0.30
+asyncpg==0.29.0
+psycopg2-binary==2.9.9
+alembic==1.13.1
+
+# ── Settings / env ────────────────────────────────────────────────────────────
+pydantic==2.7.1
+pydantic-settings==2.2.1
+python-dotenv==1.0.1
+
+# ── Reporting ─────────────────────────────────────────────────────────────────
+jinja2==3.1.4
+matplotlib==3.8.4
+seaborn==0.13.2
+
+# ── Airflow (install separately via constraints, listed here for reference) ───
+# apache-airflow==2.9.1
+# apache-airflow-providers-apache-spark==4.8.0
+# apache-airflow-providers-postgres==5.11.0
+
+# ── Testing ───────────────────────────────────────────────────────────────────
+pytest==8.2.0
+pytest-asyncio==0.23.6
+httpx==0.27.0
+
+# ── Code quality ─────────────────────────────────────────────────────────────
+black==24.4.2
+isort==5.13.2

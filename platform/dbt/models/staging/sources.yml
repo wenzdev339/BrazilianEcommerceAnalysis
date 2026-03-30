@@ -1,0 +1,109 @@
+version: 2
+
+sources:
+  - name: olist_raw
+    description: >
+      Raw Olist Brazilian E-Commerce tables loaded from source CSV files
+      into the public PostgreSQL schema via the PySpark ingestion pipeline.
+    schema: public
+    tables:
+
+      - name: customers
+        description: "Customer registry — 99,442 records."
+        columns:
+          - name: customer_id
+            description: "Unique ID per order (not per person — see customer_unique_id)"
+            tests: [not_null, unique]
+          - name: customer_unique_id
+            description: "True unique customer identifier across all orders"
+            tests: [not_null]
+          - name: customer_zip_code_prefix
+            description: "5-digit Brazilian ZIP code prefix"
+          - name: customer_city
+          - name: customer_state
+
+      - name: orders
+        description: "Order lifecycle table — 99,441 records."
+        columns:
+          - name: order_id
+            tests: [not_null, unique]
+          - name: customer_id
+            tests: [not_null]
+          - name: order_status
+            tests:
+              - accepted_values:
+                  values: [delivered, shipped, processing, invoiced, approved,
+                           canceled, created, unavailable]
+          - name: order_purchase_timestamp
+          - name: order_approved_at
+          - name: order_delivered_carrier_date
+          - name: order_delivered_customer_date
+          - name: order_estimated_delivery_date
+
+      - name: order_items
+        description: "One row per item in each order — 112,650 records."
+        columns:
+          - name: order_id
+            tests: [not_null]
+          - name: order_item_id
+            tests: [not_null]
+          - name: product_id
+            tests: [not_null]
+          - name: seller_id
+            tests: [not_null]
+          - name: price
+            tests:
+              - dbt_expectations.expect_column_values_to_be_between:
+                  min_value: 0
+                  strictly: true
+          - name: freight_value
+            tests:
+              - dbt_expectations.expect_column_values_to_be_between:
+                  min_value: 0
+
+      - name: payments
+        description: "Payment records — 103,886 records. Multiple rows per order (sequential)."
+        columns:
+          - name: order_id
+            tests: [not_null]
+          - name: payment_type
+            tests:
+              - accepted_values:
+                  values: [credit_card, boleto, voucher, debit_card, not_defined]
+          - name: payment_value
+            tests:
+              - dbt_expectations.expect_column_values_to_be_between:
+                  min_value: 0
+                  strictly: true
+
+      - name: reviews
+        description: "Customer reviews — 104,719 records."
+        columns:
+          - name: order_id
+            tests: [not_null]
+          - name: review_score
+            tests:
+              - dbt_expectations.expect_column_values_to_be_between:
+                  min_value: 1
+                  max_value: 5
+
+      - name: products
+        description: "Product catalogue — 32,951 records."
+        columns:
+          - name: product_id
+            tests: [not_null, unique]
+
+      - name: sellers
+        description: "Seller directory — 3,095 records."
+        columns:
+          - name: seller_id
+            tests: [not_null, unique]
+
+      - name: geolocation
+        description: "ZIP code coordinate lookup — ~1M records, intentional duplicates."
+
+      - name: product_category_name_translation
+        description: "Portuguese ↔ English category name mapping — 71 records."
+        columns:
+          - name: product_category_name
+            tests: [not_null, unique]
